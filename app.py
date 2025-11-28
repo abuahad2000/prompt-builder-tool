@@ -2,7 +2,7 @@ import streamlit as st
 
 # 1. إعداد الصفحة
 st.set_page_config(
-    page_title="مُنشئ برومبت جيميناي الشامل (Gemini Pro Ultimate)",
+    page_title="مُنشئ برومبت جيميناي الشامل (Gemini Ultimate)",
     layout="wide",
     page_icon="✨"
 )
@@ -11,7 +11,7 @@ st.set_page_config(
 st.markdown("""
 <style>
     /* تعريب الواجهة */
-    .stSelectbox, .stTextInput, .stMarkdown, .stButton, .stSlider, .stMultiSelect, .stRadio, .stTextArea { 
+    .stSelectbox, .stTextInput, .stMarkdown, .stButton, .stSlider, .stMultiSelect, .stRadio, .stTextArea, .stFileUploader { 
         direction: rtl; text-align: right; 
     }
     div[data-testid="stMarkdownContainer"] p { direction: rtl; }
@@ -29,175 +29,226 @@ st.markdown("""
         gap: 1px;
         padding-top: 10px;
         padding-bottom: 10px;
+        font-weight: bold;
     }
     .stTabs [aria-selected="true"] {
         background-color: #e8f0fe;
         color: #1a73e8;
     }
+    
+    /* تنسيق خاص للأقسام في التبويب الجديد */
+    .streamlit-expanderHeader {
+        font-weight: bold;
+        color: #1a73e8;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 st.title("✨ مُنشئ برومبت جيميناي الشامل (Gemini Pro Ultimate)")
-st.markdown("### التحكم الكامل في الخطوط، الصور، الفيديو، والشعارات")
+st.markdown("### أداة التصميم والتوجيه الفني المتكاملة")
 st.markdown("---")
 
 # ==============================================================================
-# ⚙️ القائمة الجانبية: إعدادات التوجيه العامة
+# ⚙️ القائمة الجانبية: إعدادات عامة
 # ==============================================================================
 with st.sidebar:
-    st.header("⚙️ إعدادات التوجيه (Instructions)")
-    
-    # 1. أبعاد الصورة/الفيديو
-    aspect_ratio = st.selectbox(
-        "📏 الأبعاد (Aspect Ratio)",
-        ["مربع (Square 1:1)", "عريض سينمائي (Cinematic 21:9)", "عريض قياسي (Wide 16:9)", "طولي (Portrait 9:16)", "لاندسكيب (4:3)"]
-    )
-    
-    # 2. مستوى التفاصيل
-    detail_level = st.selectbox(
-        "🔍 مستوى التفاصيل",
-        [
-            "بسيط (Minimalist)", 
-            "متوسط (Standard)", 
-            "مفصل جداً (Highly Detailed)", 
-            "معقد ودقيق (Intricate & Complex)"
-        ]
-    )
-    
-    # 3. الإضاءة العامة
-    lighting_global = st.selectbox(
-        "💡 الإضاءة العامة للمشهد",
-        ["", "إضاءة استوديو احترافية", "إضاءة طبيعية ناعمة", "إضاءة سينمائية درامية (Rembrandt)", "إضاءة نيون سايبر بانك", "إضاءة خافتة غامضة (Low Key)"]
-    )
-    
-    st.info("💡 **نصيحة:** الإعدادات هنا تطبق على جميع التبويبات (صور، فيديو، خطوط).")
+    st.header("⚙️ إعدادات عامة")
+    aspect_ratio = st.selectbox("📏 الأبعاد", ["Square 1:1", "Cinematic 21:9", "Wide 16:9", "Portrait 9:16", "Landscape 4:3"])
+    detail_level = st.selectbox("🔍 مستوى التفاصيل", ["Minimalist", "Standard", "Highly Detailed", "Intricate & Complex"])
+    lighting_global = st.selectbox("💡 الإضاءة العامة", ["", "Studio Lighting", "Natural Soft", "Cinematic Rembrandt", "Neon Cyberpunk", "Low Key"])
+    st.info("💡 الإعدادات هنا تطبق على كافة التبويبات.")
 
 # ==============================================================================
-# التبويبات (تمت إضافة الفيديو)
+# التبويبات (تمت إضافة التبويب الخامس)
 # ==============================================================================
-tab_font, tab_photo, tab_video, tab_brand = st.tabs([
-    "✒️ الخطوط (Typography)", 
-    "📸 الصور (Image Gen)", 
-    "🎥 الفيديو (Video Gen)",
-    "🎨 الشعارات (Branding)"
+tab_font, tab_photo, tab_video, tab_brand, tab_custom = st.tabs([
+    "✒️ الخطوط", 
+    "📸 الصور", 
+    "🎥 الفيديو",
+    "🎨 الشعارات",
+    "🎭 شخصية مخصصة"
 ])
 
 # ==============================================================================
-# التبويب 1: محرك الخطوط (النسخة المحدثة)
+# التبويب 1: الخطوط
 # ==============================================================================
 with tab_font:
-    st.header("✒️ محرك الخطوط والتأثيرات")
-    
+    st.header("✒️ محرك الخطوط")
     col_text, col_lang = st.columns([3, 1])
-    with col_text:
-        txt_content = st.text_input("📝 النص المراد كتابته", placeholder="مثال: Google Gemini")
-    with col_lang:
-        lang_mode = st.radio("لغة النص", ["عربي", "English"], horizontal=True)
-
-    st.markdown("---")
-
+    with col_text: txt_content = st.text_input("النص", placeholder="مثال: Google Gemini")
+    with col_lang: lang_mode = st.radio("اللغة", ["عربي", "English"], horizontal=True)
+    
     col_f1, col_f2 = st.columns(2)
     with col_f1:
         if lang_mode == "عربي":
-            font_cat = st.selectbox("نوع الخط العربي", ["خط الثلث (Thuluth) - فخم", "خط الكوفي (Kufic) - هندسي", "خط النسخ (Naskh) - واضح", "خط الرقعة (Ruqah) - بسيط", "خط الديواني (Diwani) - انسيابي", "خط حر (Freestyle) - مودرن"])
+            font_cat = st.selectbox("نوع الخط", ["خط الثلث (Thuluth)", "خط الكوفي (Kufic)", "خط النسخ (Naskh)", "خط الرقعة (Ruqah)", "خط الديواني (Diwani)", "خط حر (Freestyle)"])
         else:
-            font_cat = st.selectbox("Font Category", ["Serif (Classic)", "Sans Serif (Modern)", "Script (Handwritten)", "Display (Bold)", "Blackletter (Gothic)"])
-
+            font_cat = st.selectbox("Font Category", ["Serif", "Sans Serif", "Script", "Display", "Blackletter"])
     with col_f2:
-        font_material = st.selectbox("مادة/تجسيم الخط", ["حبر أسود تقليدي", "ذهب بارز 3D", "أنابيب نيون مضيئة", "معدن كروم لامع", "حفر على الخشب", "حجر منحوت", "زجاج شفاف", "ورق مقصوص"])
-
-    st.subheader("🎨 تفاصيل وتأثيرات الخط")
+        font_material = st.selectbox("المادة", ["Traditional Ink", "3D Gold", "Neon Tubes", "Liquid Chrome", "Wood Carving", "Stone Chiseled", "Glass", "Paper Cutout"])
+    
     col_d1, col_d2 = st.columns(2)
-    with col_d1:
-        line_effect = st.selectbox("شكل وتأثير الخط", ["بدون تأثيرات إضافية", "خط حفر غائر (Engraved)", "خط بارز (Embossed)", "يلتف حول كائن (Wrapped)", "مسار دائري (Circular)", "تدرج لوني (Gradient)"])
-    with col_d2:
-        background = st.selectbox("الخلفية", ["خلفية بيضاء نقية", "خلفية سوداء داكنة", "خلفية ورق بردي", "خلفية رخامية", "خلفية ضبابية (Bokeh)"])
-
-    colors = st.text_input("الألوان (اختياري)", placeholder="مثال: تدرجات الأزرق والبنفسجي")
-
-    if st.button("✨ إنشاء برومبت الخط", key="btn_font", type="primary", use_container_width=True):
+    with col_d1: line_effect = st.selectbox("تأثيرات الخط", ["Standard", "Engraved", "Embossed", "Wrapped", "Circular", "Gradient"])
+    with col_d2: background_font = st.selectbox("خلفية الخط", ["White", "Black", "Paper", "Marble", "Bokeh"])
+    
+    if st.button("✨ إنشاء برومبت الخط", key="btn_font", use_container_width=True):
         if txt_content:
-            style_desc = font_cat.split("-")[0].strip() if lang_mode == "عربي" else font_cat.split("(")[0].strip()
-            prompt_text = (
-                f"Create a high-quality typography design of '{txt_content}'. "
-                f"Font Style: {style_desc}. Material: {font_material}. Effect: {line_effect}. "
-                f"Background: {background}. Colors: {colors if colors else 'Harmonious'}. "
-                f"Lighting: {lighting_global}. Detail: {detail_level.split('(')[0]}. Aspect Ratio: {aspect_ratio.split('(')[0]}."
-            )
-            st.code(prompt_text, language="text")
+            prompt = f"Typography design of '{txt_content}', {font_cat.split('(')[0]} style, made of {font_material}, {line_effect} effect, {background_font} background, {lighting_global}, {detail_level}."
+            st.code(prompt, language="text")
 
 # ==============================================================================
 # التبويب 2: الصور
 # ==============================================================================
 with tab_photo:
-    st.header("📸 وصف الصور الثابتة")
-    col_p1, col_p2 = st.columns(2)
-    with col_p1: subject = st.text_input("الموضوع", placeholder="قطة، سيارة...")
-    with col_p2: action = st.text_input("الفعل", placeholder="تجري، تطير...")
+    st.header("📸 وصف الصور")
+    c1, c2 = st.columns(2)
+    with c1: sub_img = st.text_input("الموضوع", placeholder="قطة، سيارة...")
+    with c2: act_img = st.text_input("الفعل", placeholder="تجري، تطير...")
+    c3, c4 = st.columns(2)
+    with c3: style_img = st.selectbox("الستايل", ["Photorealistic", "Cinematic", "Cartoon", "Anime", "Digital Art", "Oil Painting"])
+    with c4: angle_img = st.selectbox("الزاوية", ["Eye Level", "Bird's Eye", "Worm's Eye", "Macro", "Wide Angle"])
     
-    col_s1, col_s2, col_s3 = st.columns(3)
-    with col_s1: art_style = st.selectbox("النمط الفني", ["واقعي (Photorealistic)", "سينمائي (Cinematic)", "كرتون (Cartoon)", "أنمي (Anime)", "رسم رقمي (Digital Art)", "زيتي (Oil Painting)"])
-    with col_s2: camera_angle = st.selectbox("زاوية الكاميرا", ["مستوى العين", "من الأعلى (Bird's eye)", "من الأسفل (Worm's eye)", "ماكرو (Macro)", "زاوية واسعة (Wide)"])
-    with col_s3: mood = st.selectbox("المزاج", ["سعيد ومشرق", "مظلم ومرعب", "هادئ ومريح", "مستقبلي", "فانتازيا"])
-
     if st.button("✨ إنشاء وصف الصورة", key="btn_img", use_container_width=True):
-        if subject:
-            final_p = (
-                f"Generate an image of {subject}, {action}. "
-                f"Style: {art_style.split('(')[0]}. Angle: {camera_angle.split('(')[0]}. "
-                f"Lighting: {lighting_global}. Mood: {mood}. "
-                f"Detail: {detail_level.split('(')[0]}. Aspect Ratio: {aspect_ratio.split('(')[0]}."
-            )
-            st.code(final_p, language="text")
+        if sub_img:
+            st.code(f"Image of {sub_img}, {act_img}, {style_img} style, {angle_img} angle, {lighting_global}, {detail_level}, {aspect_ratio}.", language="text")
 
 # ==============================================================================
-# التبويب 3: الفيديو (تمت إعادته) 🔥
+# التبويب 3: الفيديو
 # ==============================================================================
 with tab_video:
-    st.header("🎥 إعدادات الفيديو السينمائي")
+    st.header("🎥 إعدادات الفيديو")
+    sub_vid = st.text_input("موضوع الفيديو", placeholder="سيارة مسرعة...")
+    v1, v2, v3 = st.columns(3)
+    with v1: v_style = st.selectbox("ستايل الفيديو", ["Cinematic Realistic", "Animation", "Documentary", "Music Video"])
+    with v2: v_move = st.selectbox("حركة الكاميرا", ["Static", "Slow Pan", "Tracking Shot", "Orbit", "Dolly In", "Drone Flyover"])
+    with v3: v_lens = st.selectbox("العدسة", ["Anamorphic", "Wide Angle", "Macro", "Telephoto"])
     
-    col_v1, col_v2 = st.columns(2)
-    with col_v1: video_subject = st.text_input("موضوع الفيديو", placeholder="مثال: سيارة رياضية مسرعة في نفق")
-    with col_v2: video_style = st.selectbox("ستايل الفيديو", ["سينمائي واقعي (Cinematic Realistic)", "أنميشن (Animation)", "وثائقي (Documentary)", "فيديو موسيقي (Music Video Vibe)"])
-
-    col_v3, col_v4, col_v5 = st.columns(3)
-    with col_v3: camera_move = st.selectbox("حركة الكاميرا", ["ثابتة (Static)", "تحرك بطيء (Slow Pan)", "تتبع (Tracking Shot)", "دوران (Orbit)", "زووم للداخل (Dolly In)", "درون (Drone Flyover)"])
-    with col_v4: lens_type = st.selectbox("نوع العدسة", ["عدسة سينمائية (Anamorphic)", "عدسة واسعة (Wide Angle)", "عدسة ماكرو (Macro)", "عدسة زووم (Telephoto)"])
-    with col_v5: frame_rate = st.selectbox("معدل الإطارات/السرعة", ["سرعة عادية (Real-time)", "تصوير بطيء (Slow Motion)", "سريع جداً (Timelapse)"])
-
-    if st.button("✨ إنشاء برومبت الفيديو", key="btn_video", use_container_width=True):
-        if video_subject:
-            video_prompt = (
-                f"Generate a high-quality video clip of {video_subject}. "
-                f"Style: {video_style.split('(')[0]}. "
-                f"Camera Movement: {camera_move.split('(')[0]}. "
-                f"Lens: {lens_type.split('(')[0]}. "
-                f"Speed: {frame_rate.split('(')[0]}. "
-                f"Lighting: {lighting_global}. "
-                f"Aspect Ratio: {aspect_ratio.split('(')[0]}."
-            )
-            st.code(video_prompt, language="text")
-        else:
-            st.warning("اكتب موضوع الفيديو أولاً.")
+    if st.button("✨ إنشاء برومبت الفيديو", key="btn_vid", use_container_width=True):
+        if sub_vid:
+            st.code(f"High-quality video clip of {sub_vid}, {v_style}, {v_move}, {v_lens} lens, {lighting_global}, {aspect_ratio}.", language="text")
 
 # ==============================================================================
 # التبويب 4: الشعارات
 # ==============================================================================
 with tab_brand:
     st.header("🎨 تصميم الشعارات")
-    brand_symbol = st.text_input("رمز الشعار", placeholder="مثال: رأس صقر")
-    col_b1, col_b2 = st.columns(2)
-    with col_b1: logo_style = st.selectbox("نوع الشعار", ["مينيماليست (Line Art)", "ثلاثي الأبعاد (3D)", "هندسي (Geometric)", "عتيق (Vintage Badge)"])
-    with col_b2: bg_logo = st.selectbox("خلفية الشعار", ["بيضاء سادة (للقص)", "ملونة متدرجة", "محفورة على جدار"])
-
+    sym = st.text_input("رمز الشعار", placeholder="رأس صقر")
+    b1, b2 = st.columns(2)
+    with b1: l_style = st.selectbox("نوع الشعار", ["Minimalist Line Art", "3D Glossy", "Geometric", "Vintage Badge"])
+    with b2: l_bg = st.selectbox("خلفية الشعار", ["White background", "Gradient", "Wall texture"])
+    
     if st.button("✨ إنشاء برومبت الشعار", key="btn_logo", use_container_width=True):
-        if brand_symbol:
-            final_logo = (
-                f"Design a professional logo features {brand_symbol}. "
-                f"Style: {logo_style.split('(')[0]}. Background: {bg_logo}. "
-                f"Lighting: {lighting_global}. Detail: {detail_level.split('(')[0]}."
-            )
-            st.code(final_logo, language="text")
+        if sym:
+            st.code(f"Professional logo of {sym}, {l_style} style, {l_bg}, {lighting_global}, {detail_level}.", language="text")
+
+# ==============================================================================
+# التبويب 5: شخصية مخصصة (Custom Character) - الجديد! 🔥
+# ==============================================================================
+with tab_custom:
+    st.header("🎭 تصميم شخصية مخصصة ومتقدمة")
+    
+    # 1. تحديد الشخصية (صورة أو اسم)
+    st.markdown("##### 1️⃣ تحديد الشخصية")
+    col_char1, col_char2 = st.columns([1, 2])
+    with col_char1:
+        uploaded_file = st.file_uploader("ارفع صورة الشخصية (اختياري)", type=['png', 'jpg', 'jpeg'])
+    with col_char2:
+        char_name = st.text_input("أو اكتب اسم الشخصية / الوصف", placeholder="مثال: باتمان، أو شاب عربي يرتدي شماغ...")
+
+    # تجميع الخيارات في أقسام (Expanders) للتنظيم
+    
+    # القسم أ: الكاميرا واللقطة
+    with st.expander("🎥 الكاميرا، اللقطة، والزاوية (Camera & Shot)", expanded=True):
+        c_1, c_2, c_3 = st.columns(3)
+        with c_1:
+            shot_type = st.selectbox("1. نوع اللقطة (Shot Type)", ["", "Full shot", "Medium shot", "Close-up", "Extreme close-up", "Head-to-toe", "Waist-up", "Over-the-shoulder", "Profile shot", "¾ view"])
+        with c_2:
+            cam_angle = st.selectbox("2. زاوية الكاميرا (Angle)", ["", "Eye level", "Low angle", "High angle", "Bird’s-eye view", "Worm’s-eye view", "Tilted / Dutch angle", "Front view", "Back view"])
+        with c_3:
+            cam_param = st.selectbox("12. إعدادات الكاميرا (Lens)", ["", "35mm Lens", "50mm Portrait Lens", "85mm", "f/1.8 Aperture (Bokeh)", "Wide Angle", "Macro Lens"])
+
+    # القسم ب: الأسلوب والشخصية
+    with st.expander("🎨 الأسلوب الفني وتصميم الشخصية (Style & Design)"):
+        s_1, s_2, s_3 = st.columns(3)
+        with s_1:
+            art_style_cust = st.selectbox("3. نوع الأسلوب (Artistic Style)", ["", "Realistic", "Hyperrealistic", "Photorealistic", "3D Pixar-style", "3D Caricature", "Anime", "Comic style", "Minimalist", "Surreal", "Clay model", "Fantasy Illustration"])
+        with s_2:
+            char_feat = st.selectbox("4. خصائص الشخصية", ["", "Natural facial features", "Expressive facial features", "Oversized head", "Exaggerated proportions", "Chibi style", "Muscular build", "Slim build"])
+        with s_3:
+            render_qual = st.selectbox("11. جودة الإخراج (Rendering)", ["", "Ultra-detailed", "8K Resolution", "Clean render", "Cinematic quality", "Sharp textures", "Unreal Engine 5"])
+
+    # القسم ج: المظهر والحركة
+    with st.expander("👕 الملابس، الحركة، والتعبير (Outfit, Pose & Expression)"):
+        o_1, o_2 = st.columns(2)
+        with o_1:
+            outfit_details = st.text_input("5. الملابس والملحقات (تفاصيل)", placeholder="مثال: بدلة سوداء، ربطة عنق حمراء، نظارات شمسية...")
+        with o_2:
+            materials = st.selectbox("6. الخامات (Materials)", ["", "Fabric & Cloth", "Leather", "Metallic Armor", "Plastic-like", "Soft clay", "Glossy surfaces", "Matte finish", "Rough texture"])
+        
+        p_1, p_2 = st.columns(2)
+        with p_1:
+            pose_motion = st.selectbox("13. الحركة والوضعية", ["", "Standing confidently", "Walking forward", "Dynamic action pose", "Sitting relaxed", "Arms crossed", "Looking at camera", "Looking away"])
+        with p_2:
+            face_exp = st.selectbox("14. تعبير الوجه", ["", "Neutral", "Happy & Smiling", "Serious", "Thinking", "Surprised", "Confident", "Calm", "Angry"])
+
+    # القسم د: البيئة والإضاءة
+    with st.expander("💡 الإضاءة، الألوان، والخلفية (Light & Env)"):
+        l_1, l_2 = st.columns(2)
+        with l_1:
+            lighting_cust = st.selectbox("7. الإضاءة (Lighting)", ["", "Soft ambient lighting", "Studio lighting", "Three-point lighting", "Rim light", "Dramatic lighting", "Natural sunlight", "Neon light", "Volumetric light"])
+        with l_2:
+            color_pal = st.selectbox("8. الألوان (Palette)", ["", "Vibrant colors", "Muted tones", "Pastel colors", "Monochrome", "Warm colors", "Cold colors", "High contrast"])
+        
+        b_1, b_2 = st.columns(2)
+        with b_1:
+            bg_cust = st.selectbox("9. الخلفية (Background)", ["", "Minimal background", "Solid color", "Gradient", "Bokeh (Blurred)", "White studio", "Dark studio"])
+        with b_2:
+            env_cust = st.text_input("10. تفاصيل البيئة (Environment)", placeholder="مثال: شارع مستقبلي، غرفة مكتب، غابة...")
+
+    # القسم هـ: إضافات
+    with st.expander("✨ تفاصيل إضافية (Enhancements)"):
+        enhancements = st.multiselect("15. تحسينات إضافية", ["Highly stylized", "Ultra-clean", "Soft shadows", "Subsurface scattering", "Global illumination", "Perfect anatomy", "Symmetrical face"])
+
+    # زر التوليد لهذا التبويب
+    if st.button("✨ إنشاء برومبت الشخصية المخصص", key="btn_custom", type="primary", use_container_width=True):
+        # تحديد اسم الشخصية (من النص أو إشارة للصورة)
+        final_subject = char_name if char_name else "A character"
+        if uploaded_file:
+            final_subject += " [Reference Image Used]"
+        
+        # تجميع الأجزاء غير الفارغة فقط
+        prompt_parts = [
+            f"Subject: {final_subject}",
+            f"Outfit: {outfit_details}" if outfit_details else "",
+            f"Shot: {shot_type}" if shot_type else "",
+            f"Angle: {cam_angle}" if cam_angle else "",
+            f"Style: {art_style_cust}" if art_style_cust else "",
+            f"Design: {char_feat}" if char_feat else "",
+            f"Pose: {pose_motion}" if pose_motion else "",
+            f"Expression: {face_exp}" if face_exp else "",
+            f"Lighting: {lighting_cust}" if lighting_cust else "",
+            f"Colors: {color_pal}" if color_pal else "",
+            f"Material: {materials}" if materials else "",
+            f"Background: {bg_cust}" if bg_cust else "",
+            f"Environment: {env_cust}" if env_cust else "",
+            f"Camera: {cam_param}" if cam_param else "",
+            f"Quality: {render_qual}" if render_qual else "",
+            f"Enhancements: {', '.join(enhancements)}" if enhancements else ""
+        ]
+        
+        # تنظيف القائمة من العناصر الفارغة ودمجها
+        full_prompt = ", ".join([p for p in prompt_parts if p])
+        
+        # إضافة الأبعاد
+        full_prompt += f" --ar {aspect_ratio.split(' ')[-1] if '--ar' not in aspect_ratio else aspect_ratio}"
+
+        st.success("تم تجهيز البرومبت الاحترافي! انسخه أدناه:")
+        st.code(full_prompt, language="text")
+        
+        if uploaded_file:
+            st.info("ℹ️ ملاحظة: عند استخدام هذا البرومبت في جيميناي، تأكد من رفع الصورة التي اخترتها معه في الشات.")
 
 st.markdown("---")
-st.caption("🚀 شامل لجميع احتياجات التوليد (صور، فيديو، خطوط، شعارات) - مخصص لـ Gemini")
+st.caption("🚀 تم التطوير لتسهيل العمل على Google Gemini & Midjourney")
