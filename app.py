@@ -2,7 +2,7 @@ import streamlit as st
 
 # 1. إعداد الصفحة
 st.set_page_config(
-    page_title="مُنشئ برومبت جيميناي (Gemini Typography)",
+    page_title="مُنشئ برومبت جيميناي الشامل (Gemini Pro Ultimate)",
     layout="wide",
     page_icon="✨"
 )
@@ -16,7 +16,7 @@ st.markdown("""
     }
     div[data-testid="stMarkdownContainer"] p { direction: rtl; }
     div[data-testid="stSidebar"] { direction: rtl; text-align: right; }
-    h1, h2, h3, h4 { text-align: center; color: #4285F4; font-family: sans-serif; } /* لون جيميناي الأزرق */
+    h1, h2, h3, h4 { text-align: center; color: #4285F4; font-family: sans-serif; }
     .stCode { direction: ltr !important; text-align: left !important; }
     
     /* تحسين شكل التبويبات */
@@ -37,50 +37,56 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("✨ مُنشئ برومبت جيميناي (Gemini Advanced Builder)")
-st.markdown("### متخصص في التايبوجرافي، الخطوط، والتصاميم الدقيقة")
+st.title("✨ مُنشئ برومبت جيميناي الشامل (Gemini Pro Ultimate)")
+st.markdown("### التحكم الكامل في الخطوط، الصور، الفيديو، والشعارات")
 st.markdown("---")
 
 # ==============================================================================
-# ⚙️ القائمة الجانبية: إعدادات جيميناي
+# ⚙️ القائمة الجانبية: إعدادات التوجيه العامة
 # ==============================================================================
 with st.sidebar:
     st.header("⚙️ إعدادات التوجيه (Instructions)")
     
-    # نسبة الأبعاد (جيميناي يفهم الوصف)
+    # 1. أبعاد الصورة/الفيديو
     aspect_ratio = st.selectbox(
-        "📏 أبعاد الصورة",
-        ["مربع (Square 1:1)", "عريض (Wide 16:9)", "طولي (Portrait 9:16)", "لاندسكيب (4:3)"]
+        "📏 الأبعاد (Aspect Ratio)",
+        ["مربع (Square 1:1)", "عريض سينمائي (Cinematic 21:9)", "عريض قياسي (Wide 16:9)", "طولي (Portrait 9:16)", "لاندسكيب (4:3)"]
     )
     
-    # مستوى التفاصيل
-    detail_level = st.select_slider(
+    # 2. مستوى التفاصيل
+    detail_level = st.selectbox(
         "🔍 مستوى التفاصيل",
-        options=["بسيط (Minimalist)", "متوسط (Standard)", "مفصل جداً (Highly Detailed)", "معقد جداً (Intricate)"]
+        [
+            "بسيط (Minimalist)", 
+            "متوسط (Standard)", 
+            "مفصل جداً (Highly Detailed)", 
+            "معقد ودقيق (Intricate & Complex)"
+        ]
     )
     
-    # الإضاءة العامة
+    # 3. الإضاءة العامة
     lighting_global = st.selectbox(
         "💡 الإضاءة العامة للمشهد",
-        ["", "إضاءة استوديو احترافية", "إضاءة طبيعية ناعمة", "إضاءة سينمائية درامية", "إضاءة نيون سايبر بانك", "إضاءة خافتة غامضة"]
+        ["", "إضاءة استوديو احترافية", "إضاءة طبيعية ناعمة", "إضاءة سينمائية درامية (Rembrandt)", "إضاءة نيون سايبر بانك", "إضاءة خافتة غامضة (Low Key)"]
     )
     
-    st.info("💡 **نصيحة:** جيميناي يفهم اللغة العربية والإنجليزية، لكن النتائج بالإنجليزية (في البرومبت) تكون أدق أحياناً في وصف الأنماط الفنية.")
+    st.info("💡 **نصيحة:** الإعدادات هنا تطبق على جميع التبويبات (صور، فيديو، خطوط).")
 
 # ==============================================================================
-# التبويبات
+# التبويبات (تمت إضافة الفيديو)
 # ==============================================================================
-tab_font, tab_photo, tab_brand = st.tabs([
-    "✒️ الخطوط والتايبوجرافي (Typography)", 
-    "📸 توليد الصور (Image Gen)", 
-    "🎨 الهوية والشعارات (Branding)"
+tab_font, tab_photo, tab_video, tab_brand = st.tabs([
+    "✒️ الخطوط (Typography)", 
+    "📸 الصور (Image Gen)", 
+    "🎥 الفيديو (Video Gen)",
+    "🎨 الشعارات (Branding)"
 ])
 
 # ==============================================================================
-# التبويب 1: مكتبة الخطوط الشاملة (The Font Engine)
+# التبويب 1: محرك الخطوط (النسخة المحدثة)
 # ==============================================================================
 with tab_font:
-    st.header("✒️ محرك الخطوط الشامل")
+    st.header("✒️ محرك الخطوط والتأثيرات")
     
     col_text, col_lang = st.columns([3, 1])
     with col_text:
@@ -90,167 +96,108 @@ with tab_font:
 
     st.markdown("---")
 
-    # 1. مكتبة الخطوط (قوائم منفصلة للعربي والإنجليزي)
     col_f1, col_f2 = st.columns(2)
-    
-    font_style = ""
-    font_cat = ""
-
     with col_f1:
         if lang_mode == "عربي":
-            font_cat = st.selectbox("نوع الخط العربي", [
-                "خط الثلث (Thuluth) - فخم ومركب",
-                "خط الكوفي (Kufic) - هندسي وقديم",
-                "خط النسخ (Naskh) - واضح للقراءة",
-                "خط الرقعة (Ruqah) - بسيط وسريع",
-                "خط الديواني (Diwani) - انسيابي وملكي",
-                "الخط المغربي (Maghribi) - تقليدي",
-                "خط حر (Freestyle) - حديث ومودرن",
-                "كاليجرافي تجريدي (Abstract Calligraphy)"
-            ])
+            font_cat = st.selectbox("نوع الخط العربي", ["خط الثلث (Thuluth) - فخم", "خط الكوفي (Kufic) - هندسي", "خط النسخ (Naskh) - واضح", "خط الرقعة (Ruqah) - بسيط", "خط الديواني (Diwani) - انسيابي", "خط حر (Freestyle) - مودرن"])
         else:
-            font_cat = st.selectbox("Font Category", [
-                "Serif (Classic/Elegant)",
-                "Sans Serif (Modern/Clean)",
-                "Script (Handwritten/Cursive)",
-                "Display (Bold/Headline)",
-                "Blackletter (Gothic/Medieval)",
-                "Graffiti (Street Art)",
-                "Monospace (Coding/Tech)"
-            ])
+            font_cat = st.selectbox("Font Category", ["Serif (Classic)", "Sans Serif (Modern)", "Script (Handwritten)", "Display (Bold)", "Blackletter (Gothic)"])
 
     with col_f2:
-        # شكل الخط ومادته (Material & Shape)
-        font_material = st.selectbox("مادة/تجسيم الخط (Material)", [
-            "حبر أسود تقليدي (Traditional Ink)",
-            "ذهب بارز ثلاثي الأبعاد (3D Gold Render)",
-            "أنابيب نيون مضيئة (Glowing Neon Tubes)",
-            "معدن كروم لامع (Liquid Chrome)",
-            "حفر على الخشب (Wood Carving)",
-            "سحاب ودخان (Cloud/Smoke Form)",
-            "زهور ونباتات (Floral Typography)",
-            "زجاج شفاف (Glass/Crystal)",
-            "ورق مقصوص (Paper Cutout)",
-            "بسكويت/طعام (Food Typography)"
-        ])
+        font_material = st.selectbox("مادة/تجسيم الخط", ["حبر أسود تقليدي", "ذهب بارز 3D", "أنابيب نيون مضيئة", "معدن كروم لامع", "حفر على الخشب", "حجر منحوت", "زجاج شفاف", "ورق مقصوص"])
 
-    # 2. التأثيرات والخلفية
-    col_e1, col_e2, col_e3 = st.columns(3)
-    with col_e1:
-        composition = st.selectbox("تنسيق النص", ["في المنتصف (Centered)", "يملأ الكادر (Full Frame)", "مائل (Tilted)", "متداخل (Intertwined Letters)"])
-    with col_e2:
-        background = st.selectbox("الخلفية", ["خلفية بيضاء نقية", "خلفية سوداء داكنة", "خلفية ورق بردي قديم", "خلفية رخامية", "خلفية ضبابية (Bokeh)", "جدار شارع (Street Wall)"])
-    with col_e3:
-        colors = st.text_input("الألوان (اختياري)", placeholder="مثال: ذهبي وأسود، أو ألوان الباستيل")
+    st.subheader("🎨 تفاصيل وتأثيرات الخط")
+    col_d1, col_d2 = st.columns(2)
+    with col_d1:
+        line_effect = st.selectbox("شكل وتأثير الخط", ["بدون تأثيرات إضافية", "خط حفر غائر (Engraved)", "خط بارز (Embossed)", "يلتف حول كائن (Wrapped)", "مسار دائري (Circular)", "تدرج لوني (Gradient)"])
+    with col_d2:
+        background = st.selectbox("الخلفية", ["خلفية بيضاء نقية", "خلفية سوداء داكنة", "خلفية ورق بردي", "خلفية رخامية", "خلفية ضبابية (Bokeh)"])
 
-    # زر التوليد
-    if st.button("✨ إنشاء برومبت الخط (Gemini)", key="btn_font", type="primary", use_container_width=True):
+    colors = st.text_input("الألوان (اختياري)", placeholder="مثال: تدرجات الأزرق والبنفسجي")
+
+    if st.button("✨ إنشاء برومبت الخط", key="btn_font", type="primary", use_container_width=True):
         if txt_content:
-            # بناء البرومبت بصيغة يفهمها جيميناي
-            if lang_mode == "عربي":
-                style_desc = font_cat.split("-")[0].strip()
-                prompt_text = (
-                    f"Create a high-quality image featuring the Arabic text '{txt_content}'. "
-                    f"The text should be written in {style_desc} style. "
-                    f"Render the text as {font_material.split('(')[0]}. "
-                    f"Make sure the composition is {composition.split('(')[0]}. "
-                    f"Background: {background}. "
-                    f"Colors: {colors if colors else 'Colors matching the style'}. "
-                    f"Lighting: {lighting_global}. "
-                    f"Quality: {detail_level.split('(')[0]}. "
-                    f"Aspect Ratio: {aspect_ratio.split('(')[0]}."
-                )
-            else: # English
-                style_desc = font_cat.split("(")[0].strip()
-                prompt_text = (
-                    f"Create a typography design of the word '{txt_content}'. "
-                    f"Use a {style_desc} font style. "
-                    f"The text should look like {font_material.split('(')[1][:-1] if '(' in font_material else font_material}. "
-                    f"Composition: {composition.split('(')[1][:-1] if '(' in composition else composition}. "
-                    f"Background: {background}. "
-                    f"Colors: {colors if colors else 'Harmonious colors'}. "
-                    f"Lighting: {lighting_global}. "
-                    f"Overall Vibe: {detail_level.split('(')[1][:-1] if '(' in detail_level else detail_level}."
-                )
-            
-            st.success("انسخ هذا البرومبت وضعه في Google Gemini:")
+            style_desc = font_cat.split("-")[0].strip() if lang_mode == "عربي" else font_cat.split("(")[0].strip()
+            prompt_text = (
+                f"Create a high-quality typography design of '{txt_content}'. "
+                f"Font Style: {style_desc}. Material: {font_material}. Effect: {line_effect}. "
+                f"Background: {background}. Colors: {colors if colors else 'Harmonious'}. "
+                f"Lighting: {lighting_global}. Detail: {detail_level.split('(')[0]}. Aspect Ratio: {aspect_ratio.split('(')[0]}."
+            )
             st.code(prompt_text, language="text")
-        else:
-            st.warning("يرجى كتابة النص أولاً.")
 
 # ==============================================================================
-# التبويب 2: الصور (محدث لجيميناي)
+# التبويب 2: الصور
 # ==============================================================================
 with tab_photo:
-    st.header("📸 وصف الصور (Image Description)")
-    
+    st.header("📸 وصف الصور الثابتة")
     col_p1, col_p2 = st.columns(2)
-    with col_p1: subject = st.text_input("الموضوع (Subject)", placeholder="قطة ترتدي نظارة، سيارة طائرة...")
-    with col_p2: action = st.text_input("ماذا يفعل؟ (Action)", placeholder="تجري في الفضاء، واقفة تحت المطر...")
+    with col_p1: subject = st.text_input("الموضوع", placeholder="قطة، سيارة...")
+    with col_p2: action = st.text_input("الفعل", placeholder="تجري، تطير...")
     
     col_s1, col_s2, col_s3 = st.columns(3)
-    with col_s1: 
-        art_style = st.selectbox("النمط الفني", [
-            "واقعي (Photorealistic)", "كرتون (Cartoon)", "أنمي (Anime)", 
-            "رسم رقمي (Digital Art)", "زيتي (Oil Painting)", "رسم بقلم الرصاص (Pencil Sketch)",
-            "ألوان مائية (Watercolor)", "بكسل آرت (Pixel Art)", "أوريغامي (Origami)"
-        ])
-    with col_s2: 
-        camera_angle = st.selectbox("زاوية الكاميرا", ["مستوى العين", "من الأعلى (Bird's eye)", "من الأسفل (Worm's eye)", "زاوية واسعة (Wide angle)", "ماكرو (Macro)"])
-    with col_s3:
-        mood = st.selectbox("المزاج العام", ["سعيد ومشرق", "مظلم ومرعب", "هادئ ومريح", "مستقبلي وتقني", "فانتازيا سحرية"])
+    with col_s1: art_style = st.selectbox("النمط الفني", ["واقعي (Photorealistic)", "سينمائي (Cinematic)", "كرتون (Cartoon)", "أنمي (Anime)", "رسم رقمي (Digital Art)", "زيتي (Oil Painting)"])
+    with col_s2: camera_angle = st.selectbox("زاوية الكاميرا", ["مستوى العين", "من الأعلى (Bird's eye)", "من الأسفل (Worm's eye)", "ماكرو (Macro)", "زاوية واسعة (Wide)"])
+    with col_s3: mood = st.selectbox("المزاج", ["سعيد ومشرق", "مظلم ومرعب", "هادئ ومريح", "مستقبلي", "فانتازيا"])
 
     if st.button("✨ إنشاء وصف الصورة", key="btn_img", use_container_width=True):
         if subject:
-            # صيغة جيميناي
             final_p = (
                 f"Generate an image of {subject}, {action}. "
-                f"Art Style: {art_style.split('(')[0]}. "
-                f"Camera Angle: {camera_angle}. "
-                f"Lighting: {lighting_global}. "
-                f"Mood: {mood}. "
-                f"Level of Detail: {detail_level.split('(')[0]}. "
-                f"Aspect Ratio: {aspect_ratio.split('(')[0]}."
+                f"Style: {art_style.split('(')[0]}. Angle: {camera_angle.split('(')[0]}. "
+                f"Lighting: {lighting_global}. Mood: {mood}. "
+                f"Detail: {detail_level.split('(')[0]}. Aspect Ratio: {aspect_ratio.split('(')[0]}."
             )
             st.code(final_p, language="text")
-        else:
-            st.warning("اكتب موضوع الصورة.")
 
 # ==============================================================================
-# التبويب 3: الهوية والشعارات
+# التبويب 3: الفيديو (تمت إعادته) 🔥
+# ==============================================================================
+with tab_video:
+    st.header("🎥 إعدادات الفيديو السينمائي")
+    
+    col_v1, col_v2 = st.columns(2)
+    with col_v1: video_subject = st.text_input("موضوع الفيديو", placeholder="مثال: سيارة رياضية مسرعة في نفق")
+    with col_v2: video_style = st.selectbox("ستايل الفيديو", ["سينمائي واقعي (Cinematic Realistic)", "أنميشن (Animation)", "وثائقي (Documentary)", "فيديو موسيقي (Music Video Vibe)"])
+
+    col_v3, col_v4, col_v5 = st.columns(3)
+    with col_v3: camera_move = st.selectbox("حركة الكاميرا", ["ثابتة (Static)", "تحرك بطيء (Slow Pan)", "تتبع (Tracking Shot)", "دوران (Orbit)", "زووم للداخل (Dolly In)", "درون (Drone Flyover)"])
+    with col_v4: lens_type = st.selectbox("نوع العدسة", ["عدسة سينمائية (Anamorphic)", "عدسة واسعة (Wide Angle)", "عدسة ماكرو (Macro)", "عدسة زووم (Telephoto)"])
+    with col_v5: frame_rate = st.selectbox("معدل الإطارات/السرعة", ["سرعة عادية (Real-time)", "تصوير بطيء (Slow Motion)", "سريع جداً (Timelapse)"])
+
+    if st.button("✨ إنشاء برومبت الفيديو", key="btn_video", use_container_width=True):
+        if video_subject:
+            video_prompt = (
+                f"Generate a high-quality video clip of {video_subject}. "
+                f"Style: {video_style.split('(')[0]}. "
+                f"Camera Movement: {camera_move.split('(')[0]}. "
+                f"Lens: {lens_type.split('(')[0]}. "
+                f"Speed: {frame_rate.split('(')[0]}. "
+                f"Lighting: {lighting_global}. "
+                f"Aspect Ratio: {aspect_ratio.split('(')[0]}."
+            )
+            st.code(video_prompt, language="text")
+        else:
+            st.warning("اكتب موضوع الفيديو أولاً.")
+
+# ==============================================================================
+# التبويب 4: الشعارات
 # ==============================================================================
 with tab_brand:
-    st.header("🎨 تصميم الشعارات (Logo Design)")
-    
-    brand_name = st.text_input("اسم العلامة التجارية (للشعارات النصية)", placeholder="اختياري")
-    brand_symbol = st.text_input("رمز الشعار", placeholder="مثال: رأس أسد، شجرة، حرف A")
-    
+    st.header("🎨 تصميم الشعارات")
+    brand_symbol = st.text_input("رمز الشعار", placeholder="مثال: رأس صقر")
     col_b1, col_b2 = st.columns(2)
-    with col_b1:
-        logo_style = st.selectbox("نوع الشعار", [
-            "مينيماليست (Minimalist Line Art)",
-            "شعار ثلاثي الأبعاد (3D Glossy)",
-            "شعار رياضي (E-sport Mascot)",
-            "هندسي (Geometric Abstract)",
-            "عتيق (Vintage Badge)",
-            "ألوان مائية (Watercolor)"
-        ])
-    with col_b2:
-        bg_logo = st.selectbox("خلفية الشعار", ["خلفية بيضاء سادة (للقص)", "خلفية ملونة", "على جدار مكتب", "على ورقة"])
+    with col_b1: logo_style = st.selectbox("نوع الشعار", ["مينيماليست (Line Art)", "ثلاثي الأبعاد (3D)", "هندسي (Geometric)", "عتيق (Vintage Badge)"])
+    with col_b2: bg_logo = st.selectbox("خلفية الشعار", ["بيضاء سادة (للقص)", "ملونة متدرجة", "محفورة على جدار"])
 
     if st.button("✨ إنشاء برومبت الشعار", key="btn_logo", use_container_width=True):
         if brand_symbol:
             final_logo = (
-                f"Design a professional logo featuring {brand_symbol}. "
-                f"{f'Include the text: {brand_name}. ' if brand_name else ''}"
-                f"Style: {logo_style.split('(')[0]}. "
-                f"Background: {bg_logo}. "
-                f"Make it clean, vector-like, and high quality. "
-                f"Lighting: {lighting_global}."
+                f"Design a professional logo features {brand_symbol}. "
+                f"Style: {logo_style.split('(')[0]}. Background: {bg_logo}. "
+                f"Lighting: {lighting_global}. Detail: {detail_level.split('(')[0]}."
             )
             st.code(final_logo, language="text")
-        else:
-            st.warning("اكتب رمز الشعار على الأقل.")
 
 st.markdown("---")
-st.caption("🚀 تم تحسين الأوامر لتناسب نموذج Google Gemini / Imagen 3")
+st.caption("🚀 شامل لجميع احتياجات التوليد (صور، فيديو، خطوط، شعارات) - مخصص لـ Gemini")
