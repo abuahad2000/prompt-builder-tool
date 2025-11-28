@@ -1,154 +1,104 @@
 import streamlit as st
 
-# 1. إعداد الصفحة (عنوان، أيقونة، وتخطيط عريض)
+# 1. إعداد الصفحة
 st.set_page_config(
-    page_title="مُنشئ البرومبت الاحترافي",
+    page_title="مُنشئ البرومبت الشامل",
     layout="wide",
     page_icon="🎨"
 )
 
-# 2. تنسيق CSS لدعم اللغة العربية (من اليمين لليسار) وتجميل الواجهة
+# 2. تنسيق CSS (العربية + تحسين التبويبات)
 st.markdown("""
 <style>
-    /* محاذاة النصوص والقوائم لليمين */
-    .stSelectbox, .stTextInput, .stMarkdown, .stButton {
-        direction: rtl;
-        text-align: right;
-    }
-    div[data-testid="stMarkdownContainer"] p {
-        font-size: 1.2rem;
-        direction: rtl;
-    }
-    /* تنسيق العناوين في المنتصف */
-    h1, h2, h3 {
-        text-align: center;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #2c3e50;
-    }
-    /* تنسيق الأعمدة */
-    div[data-testid="column"] {
-        background-color: #f8f9fa;
-        padding: 15px;
-        border-radius: 10px;
-        border: 1px solid #e9ecef;
-        margin: 5px;
-    }
+    .stSelectbox, .stTextInput, .stMarkdown, .stButton { direction: rtl; text-align: right; }
+    div[data-testid="stMarkdownContainer"] p { direction: rtl; }
+    h1, h2, h3 { text-align: center; color: #2c3e50; }
+    /* تنسيق التبويبات */
+    button[data-baseweb="tab"] { font-size: 18px; font-weight: bold; }
 </style>
 """, unsafe_allow_html=True)
 
-# 3. عنوان التطبيق
-st.title("🎨 مُنشئ البرومبت الاحترافي (Midjourney Prompt Builder)")
+st.title("🎨 مُنشئ البرومبت الشامل (All-in-One Builder)")
 st.markdown("---")
 
-# 4. قاعدة البيانات (Dictionary) - تشمل 6 أقسام كما في الإكسيل
-data = {
-    "1️⃣ الشخصية (Subject)": {
-        "": "",
-        "رجل أعمال": "Businessman",
-        "شابة عربية": "Young Arab woman",
-        "طفل صغير": "Little child",
-        "رجل عجوز": "Elderly man",
-        "مودل أزياء": "Fashion model",
-        "محارب قديم": "Ancient warrior",
-        "رائد فضاء": "Astronaut"
-    },
-    "2️⃣ الملابس (Outfit)": {
-        "": "",
-        "بدلة رسمية": "Formal suit",
-        "عباءة سوداء": "Black Abaya",
-        "ملابس كاجوال": "Casual clothes",
-        "فستان أنيق": "Elegant dress",
-        "جاكيت جلد": "Leather jacket",
-        "زي تقليدي": "Traditional outfit",
-        "ملابس رياضية": "Sportswear"
-    },
-    "3️⃣ الوضعية (Pose)": {
-        "": "",
-        "واقفة بثقة": "Standing confidently",
-        "جالسة على كرسي": "Sitting on a chair",
-        "لقطة قريبة للوجه": "Close-up portrait",
-        "زاوية جانبية": "Side profile",
-        "تمشي في الشارع": "Walking in the street",
-        "تنظر للكاميرا": "Looking at camera"
-    },
-    "4️⃣ التعبير (Expression)": {
-        "": "",
-        "ابتسامة خفيفة": "Slight smile",
-        "نظرة حادة": "Sharp look",
-        "ضحكة عفوية": "Candid laughter",
-        "هادئة": "Calm",
-        "مندهشة": "Surprised",
-        "جادة": "Serious",
-        "حالمة": "Dreamy look"
-    },
-    "5️⃣ الإضاءة (Lighting)": {
-        "": "",
-        "إضاءة ذهبية": "Golden Hour lighting",
-        "إضاءة نيون": "Neon lighting",
-        "ظلال ناعمة": "Soft shadows",
-        "إضاءة استوديو": "Studio lighting",
-        "إضاءة درامية": "Dramatic lighting",
-        "إضاءة طبيعية": "Natural light",
-        "إضاءة سينمائية": "Cinematic lighting"
-    },
-    "6️⃣ الستايل (Style)": {
-        "": "",
-        "سينمائي": "Cinematic",
-        "فيلم كوداك": "Kodak Portra 400",
-        "أبيض وأسود": "Black and White",
-        "واقعية فائقة": "Hyper-realistic",
-        "أنمي": "Anime style",
-        "رسم زيتي": "Oil painting",
-        "سايبر بانك": "Cyberpunk style",
-        "تصوير فوتوغرافي": "Photography"
+# 3. إنشاء التبويبات الثلاثة
+tab1, tab2, tab3 = st.tabs(["📸 صور أشخاص (Photography)", "🛍️ منتجات (Products)", "🎥 فيديو (Video)"])
+
+# ==============================================================================
+# التبويب الأول: صور الأشخاص
+# ==============================================================================
+with tab1:
+    st.header("إعدادات صور الأشخاص")
+    
+    # بيانات الصور
+    data_photo = {
+        "1️⃣ الشخصية": {"": "", "رجل أعمال": "Businessman", "شابة عربية": "Young Arab woman", "طفل صغير": "Little child", "رجل عجوز": "Elderly man", "مودل أزياء": "Fashion model"},
+        "2️⃣ الملابس": {"": "", "بدلة رسمية": "Formal suit", "عباءة سوداء": "Black Abaya", "ملابس كاجوال": "Casual clothes", "فستان أنيق": "Elegant dress"},
+        "3️⃣ الوضعية": {"": "", "واقفة بثقة": "Standing confidently", "جالسة على كرسي": "Sitting on a chair", "لقطة قريبة": "Close-up portrait"},
+        "4️⃣ التعبير": {"": "", "ابتسامة خفيفة": "Slight smile", "نظرة حادة": "Sharp look", "ضحكة عفوية": "Candid laughter"},
+        "5️⃣ الإضاءة": {"": "", "إضاءة ذهبية": "Golden Hour lighting", "إضاءة نيون": "Neon lighting", "ظلال ناعمة": "Soft shadows"},
+        "6️⃣ الستايل": {"": "", "سينمائي": "Cinematic", "فيلم كوداك": "Kodak Portra 400", "واقعية فائقة": "Hyper-realistic"}
     }
-}
+    
+    cols = st.columns(6)
+    sel_photo = {}
+    for i, (cat, opts) in enumerate(data_photo.items()):
+        with cols[5-i]: # عكس الترتيب
+            choice = st.selectbox(cat, list(opts.keys()), key=f"photo_{i}")
+            if choice: sel_photo[cat] = opts[choice]
 
-# 5. بناء الواجهة (6 أعمدة)
-# نستخدم reversed لعكس الترتيب ليتناسب مع اتجاه العين العربية (يمين لليسار)
-cols = st.columns(6)
-keys = list(data.keys())
-selections = {}
+    if st.button("✨ إنشاء برومبت الصور", key="btn_photo", type="primary", use_container_width=True):
+        final = ", ".join(sel_photo.values())
+        if final: st.success("تم!"); st.code(final, language="text")
+        else: st.warning("اختر عنصراً واحداً على الأقل.")
 
-for i, col in enumerate(reversed(cols)):
-    category = keys[i]
-    with col:
-        # عنوان صغير لكل عمود
-        st.markdown(f"### {category.split(' ')[1]}")
-        # القائمة المنسدلة
-        choice = st.selectbox(
-            label=category,
-            options=list(data[category].keys()),
-            key=category,
-            label_visibility="collapsed" # إخفاء العنوان المكرر
-        )
-        if choice:
-            selections[category] = data[category][choice]
+# ==============================================================================
+# التبويب الثاني: المنتجات
+# ==============================================================================
+with tab2:
+    st.header("إعدادات تصوير المنتجات")
+    
+    # بيانات المنتجات
+    data_prod = {
+        "1️⃣ نوع المنتج": {"": "", "زجاجة عطر": "Perfume bottle", "علبة كريم": "Cream jar", "حذاء رياضي": "Sneaker", "ساعة يد": "Luxury watch"},
+        "2️⃣ الخامة": {"": "", "زجاج شفاف": "Transparent glass", "بلاستيك غير لامع": "Matte plastic", "معدن ذهبي": "Gold metal", "خشب طبيعي": "Natural wood"},
+        "3️⃣ الخلفية": {"": "", "منصة رخامية": "Marble podium", "خلفية ملونة سادة": "Solid color background", "في الطبيعة": "In nature", "طرطشة ماء": "Water splash"},
+        "4️⃣ اللقطة": {"": "", "زاوية المنتج (هيرو)": "Hero shot", "من الأعلى (فلات لاي)": "Flat lay", "لقطة تفصيلية": "Macro detail"}
+    }
+    
+    cols = st.columns(4)
+    sel_prod = {}
+    for i, (cat, opts) in enumerate(data_prod.items()):
+        with cols[3-i]:
+            choice = st.selectbox(cat, list(opts.keys()), key=f"prod_{i}")
+            if choice: sel_prod[cat] = opts[choice]
 
-st.markdown("---")
+    if st.button("🛍️ إنشاء برومبت المنتجات", key="btn_prod", type="primary", use_container_width=True):
+        final = ", ".join(sel_prod.values())
+        if final: st.success("تم!"); st.code(final, language="text")
+        else: st.warning("اختر عنصراً واحداً على الأقل.")
 
-# 6. زر التكوين والعرض
-col1, col2, col3 = st.columns([1, 2, 1]) # تنسيق لتوسط الزر
+# ==============================================================================
+# التبويب الثالث: الفيديو
+# ==============================================================================
+with tab3:
+    st.header("إعدادات الفيديو السينمائي")
+    
+    # بيانات الفيديو
+    data_vid = {
+        "1️⃣ حركة الكاميرا": {"": "", "كاميرا ثابتة": "Static Camera", "تحرك بطيء": "Slow Motion", "دوران حول الهدف": "Orbit shot", "تحليق درون": "Drone shot"},
+        "2️⃣ العدسة": {"": "", "عدسة 35 ملم": "35mm lens", "عدسة واسعة": "Fisheye lens", "جودة 4K": "4K resolution"},
+        "3️⃣ الجو العام": {"": "", "ضبابي وغامض": "Foggy and mysterious", "مشرق وحيوي": "Bright and energetic", "تقني ومستقبلي": "Tech and futuristic"}
+    }
+    
+    cols = st.columns(3)
+    sel_vid = {}
+    for i, (cat, opts) in enumerate(data_vid.items()):
+        with cols[2-i]:
+            choice = st.selectbox(cat, list(opts.keys()), key=f"vid_{i}")
+            if choice: sel_vid[cat] = opts[choice]
 
-with col2:
-    if st.button("✨ إنشاء البرومبت (Generate Prompt)", type="primary", use_container_width=True):
-        
-        # تجميع القيم الإنجليزية المختارة
-        # نستخدم الترتيب الأصلي للمفاتيح (keys) لضمان ترتيب الجملة الصحيح (شخصية -> ملابس -> وضعية...)
-        final_prompt_parts = []
-        for key in keys:
-            if key in selections and selections[key]:
-                final_prompt_parts.append(selections[key])
-        
-        final_prompt = ", ".join(final_prompt_parts)
-        
-        if final_prompt:
-            st.success("تم تجهيز البرومبت بنجاح! 👇")
-            # st.code يعرض النص في صندوق يسهل نسخه بضغطة زر
-            st.code(final_prompt, language="text")
-        else:
-            st.warning("⚠️ يرجى اختيار عنصر واحد على الأقل من القوائم.")
-
-# تذييل الصفحة
-st.markdown("---")
-st.markdown("<div style='text-align: center; color: grey;'>تم التطوير باستخدام Python & Streamlit 🚀</div>", unsafe_allow_html=True)
+    if st.button("🎥 إنشاء برومبت الفيديو", key="btn_vid", type="primary", use_container_width=True):
+        final = ", ".join(sel_vid.values())
+        if final: st.success("تم!"); st.code(final, language="text")
+        else: st.warning("اختر عنصراً واحداً على الأقل.")
