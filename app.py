@@ -2,103 +2,144 @@ import streamlit as st
 
 # 1. إعداد الصفحة
 st.set_page_config(
-    page_title="مُنشئ البرومبت الشامل",
+    page_title="مُنشئ البرومبت الاحترافي v2",
     layout="wide",
     page_icon="🎨"
 )
 
-# 2. تنسيق CSS (العربية + تحسين التبويبات)
+# 2. تنسيق CSS
 st.markdown("""
 <style>
-    .stSelectbox, .stTextInput, .stMarkdown, .stButton { direction: rtl; text-align: right; }
+    .stSelectbox, .stTextInput, .stMarkdown, .stButton, .stSlider { direction: rtl; text-align: right; }
     div[data-testid="stMarkdownContainer"] p { direction: rtl; }
-    h1, h2, h3 { text-align: center; color: #2c3e50; }
-    /* تنسيق التبويبات */
-    button[data-baseweb="tab"] { font-size: 18px; font-weight: bold; }
+    h1, h2, h3, h4 { text-align: center; color: #2c3e50; font-family: sans-serif; }
+    /* تنسيق خاص للنتائج */
+    .stCode { direction: ltr !important; text-align: left !important; }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🎨 مُنشئ البرومبت الشامل (All-in-One Builder)")
+st.title("🎨 مُنشئ البرومبت الاحترافي (Midjourney Pro Builder)")
 st.markdown("---")
 
-# 3. إنشاء التبويبات الثلاثة
+# --- بيانات مشتركة (الأبعاد) ---
+ar_options = {
+    "مربع (1:1) - انستقرام": "--ar 1:1",
+    "طولي (9:16) - ستوري/تيك توك": "--ar 9:16",
+    "عرضي (16:9) - يوتيوب/سينمائي": "--ar 16:9",
+    "بورتريه (4:5) - فوتوغرافي": "--ar 4:5",
+    "لاندسكيب (3:2) - كلاسيك": "--ar 3:2"
+}
+
+# --- التبويبات ---
 tab1, tab2, tab3 = st.tabs(["📸 صور أشخاص (Photography)", "🛍️ منتجات (Products)", "🎥 فيديو (Video)"])
 
 # ==============================================================================
 # التبويب الأول: صور الأشخاص
 # ==============================================================================
 with tab1:
-    st.header("إعدادات صور الأشخاص")
+    st.header("📸 إعدادات التصوير الفوتوغرافي")
     
-    # بيانات الصور
+    # 1. القوائم الأساسية (تم توسيع الإضاءة)
     data_photo = {
-        "1️⃣ الشخصية": {"": "", "رجل أعمال": "Businessman", "شابة عربية": "Young Arab woman", "طفل صغير": "Little child", "رجل عجوز": "Elderly man", "مودل أزياء": "Fashion model"},
-        "2️⃣ الملابس": {"": "", "بدلة رسمية": "Formal suit", "عباءة سوداء": "Black Abaya", "ملابس كاجوال": "Casual clothes", "فستان أنيق": "Elegant dress"},
-        "3️⃣ الوضعية": {"": "", "واقفة بثقة": "Standing confidently", "جالسة على كرسي": "Sitting on a chair", "لقطة قريبة": "Close-up portrait"},
-        "4️⃣ التعبير": {"": "", "ابتسامة خفيفة": "Slight smile", "نظرة حادة": "Sharp look", "ضحكة عفوية": "Candid laughter"},
-        "5️⃣ الإضاءة": {"": "", "إضاءة ذهبية": "Golden Hour lighting", "إضاءة نيون": "Neon lighting", "ظلال ناعمة": "Soft shadows"},
-        "6️⃣ الستايل": {"": "", "سينمائي": "Cinematic", "فيلم كوداك": "Kodak Portra 400", "واقعية فائقة": "Hyper-realistic"}
+        "1️⃣ الشخصية": {"": "", "رجل أعمال": "Businessman", "شابة عربية": "Young Arab woman", "طفل صغير": "Little child", "رجل عجوز": "Elderly man", "مودل أزياء": "Fashion model", "سايبورغ": "Cyborg", "شخصية خيالية": "Fantasy character"},
+        "2️⃣ الملابس": {"": "", "بدلة رسمية": "Formal suit", "عباءة سوداء": "Black Abaya", "ملابس كاجوال": "Casual clothes", "فستان أنيق": "Elegant dress", "جاكيت جلد": "Leather jacket", "زي فضائي": "Space suit"},
+        "3️⃣ الوضعية": {"": "", "واقفة بثقة": "Standing confidently", "جالسة على كرسي": "Sitting on a chair", "لقطة قريبة جداً": "Extreme close-up", "من الخلف": "View from behind", "زاوية منخفضة": "Low angle shot"},
+        "4️⃣ التعبير": {"": "", "ابتسامة خفيفة": "Slight smile", "نظرة حادة": "Sharp look", "ضحكة عفوية": "Candid laughter", "وجه خالي من التعبير": "Blank expression", "غاضب": "Angry face"},
+        "5️⃣ الإضاءة (موسع)": {
+            "": "", 
+            "إضاءة ذهبية": "Golden Hour lighting", 
+            "إضاءة نيون": "Neon lighting", 
+            "إضاءة ناعمة (Softbox)": "Softbox lighting",
+            "إضاءة من الأعلى (Top-down)": "Top-down lighting",
+            "إضاءة جانبية (Side Light)": "Side lighting",
+            "إضاءة خلفية (Rim Light)": "Rim lighting",
+            "إضاءة ريمبرانت (درامية)": "Rembrandt lighting",
+            "إضاءة سينمائية": "Cinematic lighting"
+        },
+        "6️⃣ الستايل": {"": "", "سينمائي": "Cinematic", "فيلم كوداك": "Kodak Portra 400", "واقعية فائقة": "Hyper-realistic", "أنمي": "Anime style", "رسم رقمي": "Digital art", "أبيض وأسود": "Black and white photography"}
     }
     
+    # عرض القوائم
     cols = st.columns(6)
     sel_photo = {}
     for i, (cat, opts) in enumerate(data_photo.items()):
-        with cols[5-i]: # عكس الترتيب
+        with cols[5-i]: 
             choice = st.selectbox(cat, list(opts.keys()), key=f"photo_{i}")
             if choice: sel_photo[cat] = opts[choice]
 
+    st.markdown("---")
+    
+    # 2. إعدادات تقنية (البارامترات)
+    col_p1, col_p2, col_p3 = st.columns(3)
+    with col_p3:
+        ar_photo = st.selectbox("📏 أبعاد الصورة (--ar)", list(ar_options.keys()), key="ar_p")
+    with col_p2:
+        stylize = st.slider("🎨 قوة الستايل (--stylize)", 0, 1000, 250, key="sty_p", help="كلما زاد الرقم زاد الإبداع الفني")
+    with col_p1:
+        chaos = st.slider("🎲 التنوع/الفوضى (--chaos)", 0, 100, 0, key="ch_p", help="كلما زاد الرقم زادت غرابة النتائج")
+
+    # زر الإنشاء
     if st.button("✨ إنشاء برومبت الصور", key="btn_photo", type="primary", use_container_width=True):
-        final = ", ".join(sel_photo.values())
-        if final: st.success("تم!"); st.code(final, language="text")
-        else: st.warning("اختر عنصراً واحداً على الأقل.")
+        # تجميع الوصف
+        desc_parts = [val for val in sel_photo.values() if val]
+        description = ", ".join(desc_parts)
+        
+        if description:
+            # إضافة البارامترات في النهاية
+            params = f"{ar_options[ar_photo]} --v 6.0 --s {stylize} --c {chaos}"
+            final_prompt = f"{description} {params}"
+            st.success("تم التجهيز! انسخ الكود أدناه:")
+            st.code(final_prompt, language="text")
+        else:
+            st.warning("الرجاء اختيار وصف للصورة أولاً.")
 
 # ==============================================================================
 # التبويب الثاني: المنتجات
 # ==============================================================================
 with tab2:
-    st.header("إعدادات تصوير المنتجات")
+    st.header("🛍️ إعدادات تصوير المنتجات")
     
-    # بيانات المنتجات
     data_prod = {
-        "1️⃣ نوع المنتج": {"": "", "زجاجة عطر": "Perfume bottle", "علبة كريم": "Cream jar", "حذاء رياضي": "Sneaker", "ساعة يد": "Luxury watch"},
-        "2️⃣ الخامة": {"": "", "زجاج شفاف": "Transparent glass", "بلاستيك غير لامع": "Matte plastic", "معدن ذهبي": "Gold metal", "خشب طبيعي": "Natural wood"},
-        "3️⃣ الخلفية": {"": "", "منصة رخامية": "Marble podium", "خلفية ملونة سادة": "Solid color background", "في الطبيعة": "In nature", "طرطشة ماء": "Water splash"},
-        "4️⃣ اللقطة": {"": "", "زاوية المنتج (هيرو)": "Hero shot", "من الأعلى (فلات لاي)": "Flat lay", "لقطة تفصيلية": "Macro detail"}
+        "1️⃣ المنتج": {"": "", "زجاجة عطر": "Perfume bottle", "علبة كريم": "Cream jar", "حذاء رياضي": "Sneaker", "حقيبة يد": "Handbag", "علبة عصير": "Juice can"},
+        "2️⃣ الخامة": {"": "", "زجاج شفاف": "Transparent glass", "بلاستيك غير لامع": "Matte plastic", "معدن ذهبي": "Gold metal", "خشب طبيعي": "Natural wood", "قماش حرير": "Silk fabric"},
+        "3️⃣ الخلفية": {"": "", "منصة رخامية": "Marble podium", "خلفية ملونة سادة": "Solid color background", "في الطبيعة": "In nature", "طرطشة ماء": "Water splash", "صخور سوداء": "Black rocks"},
+        "4️⃣ الإضاءة": {"": "", "إضاءة استوديو": "Studio lighting", "إضاءة ناعمة": "Soft lighting", "إضاءة قوية": "Hard lighting", "إضاءة من الجنب": "Side lighting", "بدون ظلال": "No shadows"},
+        "5️⃣ اللقطة": {"": "", "زاوية المنتج (هيرو)": "Hero shot", "من الأعلى (فلات لاي)": "Flat lay", "لقطة تفصيلية (ماكرو)": "Macro detail", "زاوية 45": "45-degree angle"}
     }
     
-    cols = st.columns(4)
+    cols = st.columns(5)
     sel_prod = {}
     for i, (cat, opts) in enumerate(data_prod.items()):
-        with cols[3-i]:
+        with cols[4-i]:
             choice = st.selectbox(cat, list(opts.keys()), key=f"prod_{i}")
             if choice: sel_prod[cat] = opts[choice]
+            
+    st.markdown("---")
+    
+    # بارامترات المنتجات
+    col_pr1, col_pr2 = st.columns(2)
+    with col_pr2:
+        ar_prod = st.selectbox("📏 أبعاد الصورة", list(ar_options.keys()), key="ar_prod")
+    with col_pr1:
+        quality = st.select_slider("💎 الجودة (--q)", options=[".25", ".5", "1"], value="1", key="q_prod")
 
     if st.button("🛍️ إنشاء برومبت المنتجات", key="btn_prod", type="primary", use_container_width=True):
-        final = ", ".join(sel_prod.values())
-        if final: st.success("تم!"); st.code(final, language="text")
-        else: st.warning("اختر عنصراً واحداً على الأقل.")
+        desc = ", ".join([v for v in sel_prod.values() if v])
+        if desc:
+            params = f"{ar_options[ar_prod]} --v 6.0 --q {quality}"
+            st.success("جاهز للنسخ:")
+            st.code(f"{desc} {params}", language="text")
+        else:
+            st.warning("اختر مواصفات المنتج.")
 
 # ==============================================================================
 # التبويب الثالث: الفيديو
 # ==============================================================================
 with tab3:
-    st.header("إعدادات الفيديو السينمائي")
+    st.header("🎥 إعدادات الفيديو السينمائي")
     
-    # بيانات الفيديو
     data_vid = {
-        "1️⃣ حركة الكاميرا": {"": "", "كاميرا ثابتة": "Static Camera", "تحرك بطيء": "Slow Motion", "دوران حول الهدف": "Orbit shot", "تحليق درون": "Drone shot"},
-        "2️⃣ العدسة": {"": "", "عدسة 35 ملم": "35mm lens", "عدسة واسعة": "Fisheye lens", "جودة 4K": "4K resolution"},
-        "3️⃣ الجو العام": {"": "", "ضبابي وغامض": "Foggy and mysterious", "مشرق وحيوي": "Bright and energetic", "تقني ومستقبلي": "Tech and futuristic"}
-    }
-    
-    cols = st.columns(3)
-    sel_vid = {}
-    for i, (cat, opts) in enumerate(data_vid.items()):
-        with cols[2-i]:
-            choice = st.selectbox(cat, list(opts.keys()), key=f"vid_{i}")
-            if choice: sel_vid[cat] = opts[choice]
-
-    if st.button("🎥 إنشاء برومبت الفيديو", key="btn_vid", type="primary", use_container_width=True):
-        final = ", ".join(sel_vid.values())
-        if final: st.success("تم!"); st.code(final, language="text")
-        else: st.warning("اختر عنصراً واحداً على الأقل.")
+        "1️⃣ الحركة": {"": "", "كاميرا ثابتة": "Static Camera", "تحرك بطيء (Slow Mo)": "Slow Motion", "دوران حول الهدف": "Orbit shot", "زووم للداخل": "Dolly In", "تتبع الهدف": "Tracking shot"},
+        "2️⃣ العدسة": {"": "", "35 ملم (سينمائي)": "35mm lens", "عدسة واسعة (FishEye)": "Fisheye lens", "عدسة ماكرو": "Macro lens", "عدسة تيلي فوتو": "Telephoto lens"},
+        "3️⃣ الإضاءة": {"": "", "إضاءة درامية": "Dramatic lighting", "إضاءة نهارية": "Daylight", "ساعة زرقاء": "Blue hour", "إضاءة ليلية": "Night lighting"},
+        "4️⃣ الجو العام": {"": "", "ضبابي وغامض": "Foggy and mysterious", "مشر
