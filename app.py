@@ -71,7 +71,8 @@ with st.sidebar:
         "طبيعية ناعمة (Natural Soft)": "Natural Soft Lighting",
         "سينمائية درامية (Cinematic)": "Cinematic Rembrandt Lighting",
         "نيون سايبر بانك (Neon)": "Neon Cyberpunk Lighting",
-        "خافتة غامضة (Low Key)": "Low Key Lighting"
+        "خافتة غامضة (Low Key)": "Low Key Lighting",
+        "ساعة ذهبية (Golden Hour)": "Golden Hour Lighting"
     }
     lighting_sel = st.selectbox("💡 الإضاءة العامة", list(lighting_dict.keys()))
     
@@ -82,14 +83,14 @@ with st.sidebar:
 # ==============================================================================
 tab_font, tab_photo, tab_video, tab_brand, tab_custom = st.tabs([
     "✒️ الخطوط", 
-    "📸 الصور", 
-    "🎥 الفيديو",
+    "📸 الصور (مطور)", 
+    "🎥 الفيديو (مطور)",
     "🎨 الشعارات",
     "🎭 شخصية مخصصة"
 ])
 
 # ==============================================================================
-# التبويب 1: الخطوط (مختصر للكود)
+# التبويب 1: الخطوط
 # ==============================================================================
 with tab_font:
     st.header("✒️ محرك الخطوط")
@@ -101,7 +102,7 @@ with tab_font:
     with col_f1:
         if lang_mode == "عربي":
             font_cat = st.selectbox("نوع الخط", ["خط الثلث", "خط الكوفي", "خط النسخ", "خط الرقعة", "خط الديواني", "خط حر"])
-            font_en = font_cat # تبسيط للترجمة
+            font_en = font_cat
         else:
             font_cat = st.selectbox("Font Category", ["Serif", "Sans Serif", "Script", "Display", "Blackletter"])
             font_en = font_cat
@@ -116,24 +117,92 @@ with tab_font:
             st.code(prompt, language="text")
 
 # ==============================================================================
-# التبويب 2: الصور (مختصر)
+# التبويب 2: الصور (تم تحويله لخيارات شاملة)
 # ==============================================================================
 with tab_photo:
-    st.header("📸 وصف الصور")
-    c1, c2 = st.columns(2)
-    with c1: sub_img = st.text_input("الموضوع", placeholder="قطة، سيارة...")
-    with c2: act_img = st.text_input("الفعل", placeholder="تجري، تطير...")
-    if st.button("✨ إنشاء وصف الصورة", key="btn_img", use_container_width=True):
-        if sub_img: st.code(f"Image of {sub_img}, {act_img}, {lighting_dict[lighting_sel]}, {detail_dict[detail_sel]}, {aspect_ratio}.", language="text")
+    st.header("📸 استوديو الصور الفوتوغرافي")
+    
+    # 1. الموضوع الأساسي
+    st.markdown("##### 1️⃣ تكوين المشهد")
+    col_p_sub, col_p_act = st.columns(2)
+    with col_p_sub:
+        p_subject = st.text_input("الموضوع (Subject)", placeholder="مثال: قطة، سيارة رياضية، قلعة قديمة...")
+    with col_p_act:
+        p_action = st.text_input("ماذا يفعل؟ (Action)", placeholder="مثال: تجري تحت المطر، تطير في الفضاء...")
+
+    # قواميس الصور
+    photo_styles = {"": "", "واقعي (Photorealistic)": "Photorealistic", "سينمائي (Cinematic)": "Cinematic", "أنمي (Anime)": "Anime style", "رسم زيتي (Oil Painting)": "Oil Painting", "سايبر بانك (Cyberpunk)": "Cyberpunk style", "أبيض وأسود (Black & White)": "Black and White Photography", "بولارويد (Polaroid)": "Polaroid Vintage", "ماكرو (Macro)": "Macro Photography"}
+    photo_angles = {"": "", "مستوى العين": "Eye Level", "زاوية واسعة": "Wide Angle", "من الأعلى (درون)": "Drone View/Bird's Eye", "من الأسفل": "Low Angle/Worm's Eye", "لقطة قريبة": "Close-up Portrait"}
+    photo_cameras = {"": "", "كانون (Canon EOS)": "Shot on Canon EOS", "سوني (Sony Alpha)": "Shot on Sony Alpha", "فيلم 35 ملم": "35mm Film Grain", "جودة 8K": "8K Resolution, Unreal Engine 5"}
+    photo_moods = {"": "", "سعيد ومشرق": "Happy and Bright", "مظلم وغموض": "Dark and Mysterious", "فانتازيا": "Fantasy Dreamy", "مستقبلي": "Futuristic Sci-Fi", "حزين": "Melancholic Mood"}
+
+    # 2. الخيارات المتقدمة
+    with st.expander("🎨 النمط الفني والكاميرا (Art & Camera)", expanded=True):
+        cp1, cp2 = st.columns(2)
+        with cp1: sel_p_style = st.selectbox("النمط الفني", list(photo_styles.keys()))
+        with cp2: sel_p_angle = st.selectbox("زاوية التصوير", list(photo_angles.keys()))
+        
+        cp3, cp4 = st.columns(2)
+        with cp3: sel_p_cam = st.selectbox("نوع الكاميرا/الجودة", list(photo_cameras.keys()))
+        with cp4: sel_p_mood = st.selectbox("المزاج العام", list(photo_moods.keys()))
+
+    if st.button("✨ إنشاء وصف الصورة", key="btn_img", type="primary", use_container_width=True):
+        if p_subject:
+            # تجميع القيم
+            p_parts = [
+                f"Image of {p_subject}",
+                f"Action: {p_action}" if p_action else "",
+                f"Style: {photo_styles[sel_p_style]}" if sel_p_style else "",
+                f"Angle: {photo_angles[sel_p_angle]}" if sel_p_angle else "",
+                f"Camera: {photo_cameras[sel_p_cam]}" if sel_p_cam else "",
+                f"Mood: {photo_moods[sel_p_mood]}" if sel_p_mood else "",
+                f"Lighting: {lighting_dict[lighting_sel]}" if lighting_sel else "",
+                f"Details: {detail_dict[detail_sel]}",
+                f"Aspect Ratio: {aspect_ratio}"
+            ]
+            st.code(", ".join([p for p in p_parts if p]), language="text")
+        else:
+            st.warning("الرجاء كتابة موضوع الصورة.")
 
 # ==============================================================================
-# التبويب 3: الفيديو (مختصر)
+# التبويب 3: الفيديو (تم تحويله لخيارات شاملة)
 # ==============================================================================
 with tab_video:
-    st.header("🎥 إعدادات الفيديو")
-    sub_vid = st.text_input("موضوع الفيديو", placeholder="سيارة مسرعة...")
-    if st.button("✨ إنشاء برومبت الفيديو", key="btn_vid", use_container_width=True):
-        if sub_vid: st.code(f"High-quality video clip of {sub_vid}, {lighting_dict[lighting_sel]}, {aspect_ratio}.", language="text")
+    st.header("🎥 الإنتاج السينمائي والفيديو")
+    
+    st.markdown("##### 1️⃣ فكرة الفيديو")
+    v_subject = st.text_input("موضوع الفيديو (Scene Description)", placeholder="مثال: رائد فضاء يمشي على المريخ...")
+
+    # قواميس الفيديو
+    vid_styles = {"": "", "سينمائي واقعي": "Cinematic Realistic", "أنميشن (3D)": "3D Animation", "أنمي ياباني": "Anime Style", "وثائقي طبيعة": "Nature Documentary", "فيديو موسيقي": "Music Video Vibe", "خيال علمي": "Sci-Fi Movie Style"}
+    vid_moves = {"": "", "كاميرا ثابتة": "Static Camera", "تحرك بطيء (Slow Pan)": "Slow Pan", "تتبع الهدف (Tracking)": "Tracking Shot", "دوران (Orbit)": "Orbit Shot", "زووم للداخل": "Dolly In Zoom", "تحليق درون": "Drone Flyover"}
+    vid_lenses = {"": "", "عدسة سينمائية (Anamorphic)": "Anamorphic Lens", "عدسة واسعة (FishEye)": "Fisheye Lens", "عدسة ماكرو": "Macro Lens", "عدسة زووم": "Telephoto Zoom Lens"}
+    vid_speed = {"": "", "سرعة عادية": "Real-time Speed", "تصوير بطيء (Slow Motion)": "Slow Motion", "سريع (Timelapse)": "Timelapse", "سريع جداً (Hyperlapse)": "Hyperlapse"}
+
+    # 2. الخيارات السينمائية
+    with st.expander("🎬 الإخراج السينمائي (Cinematography)", expanded=True):
+        cv1, cv2 = st.columns(2)
+        with cv1: sel_v_style = st.selectbox("ستايل الفيديو", list(vid_styles.keys()))
+        with cv2: sel_v_move = st.selectbox("حركة الكاميرا", list(vid_moves.keys()))
+        
+        cv3, cv4 = st.columns(2)
+        with cv3: sel_v_lens = st.selectbox("نوع العدسة", list(vid_lenses.keys()))
+        with cv4: sel_v_speed = st.selectbox("سرعة الفيديو", list(vid_speed.keys()))
+
+    if st.button("✨ إنشاء برومبت الفيديو", key="btn_vid", type="primary", use_container_width=True):
+        if v_subject:
+            v_parts = [
+                f"High-quality video clip of {v_subject}",
+                f"Style: {vid_styles[sel_v_style]}" if sel_v_style else "",
+                f"Movement: {vid_moves[sel_v_move]}" if sel_v_move else "",
+                f"Lens: {vid_lenses[sel_v_lens]}" if sel_v_lens else "",
+                f"Speed: {vid_speed[sel_v_speed]}" if sel_v_speed else "",
+                f"Lighting: {lighting_dict[lighting_sel]}" if lighting_sel else "",
+                f"Aspect Ratio: {aspect_ratio}"
+            ]
+            st.code(", ".join([v for v in v_parts if v]), language="text")
+        else:
+            st.warning("الرجاء كتابة موضوع الفيديو.")
 
 # ==============================================================================
 # التبويب 4: الشعارات (مختصر)
@@ -141,8 +210,16 @@ with tab_video:
 with tab_brand:
     st.header("🎨 تصميم الشعارات")
     sym = st.text_input("رمز الشعار", placeholder="رأس صقر")
+    
+    logo_styles = {"": "", "مينيماليست": "Minimalist Line Art", "ثلاثي الأبعاد": "3D Glossy", "هندسي": "Geometric Abstract", "شعار ماسكوت": "Mascot E-Sport", "عتيق": "Vintage Badge"}
+    logo_bg = {"": "", "خلفية بيضاء": "White Background", "خلفية سوداء": "Black Background", "جدار": "Office Wall Texture"}
+    
+    cb1, cb2 = st.columns(2)
+    with cb1: sel_l_style = st.selectbox("نوع الشعار", list(logo_styles.keys()))
+    with cb2: sel_l_bg = st.selectbox("الخلفية", list(logo_bg.keys()))
+    
     if st.button("✨ إنشاء برومبت الشعار", key="btn_logo", use_container_width=True):
-        if sym: st.code(f"Professional logo of {sym}, {lighting_dict[lighting_sel]}, {detail_dict[detail_sel]}.", language="text")
+        if sym: st.code(f"Professional logo of {sym}, {logo_styles[sel_l_style]}, {logo_bg[sel_l_bg]}, {lighting_dict[lighting_sel]}.", language="text")
 
 # ==============================================================================
 # التبويب 5: شخصية مخصصة (Custom Character) - القواميس الكاملة
@@ -203,7 +280,7 @@ with tab_custom:
         with s_2: s_char = st.selectbox("4. خصائص الشخصية", list(chars_dict.keys()))
         with s_3: s_render = st.selectbox("11. جودة الإخراج", list(render_dict.keys()))
 
-    # القسم ج: المظهر والحركة (تم تحويل الملابس لقائمة)
+    # القسم ج: المظهر والحركة
     with st.expander("👕 الملابس، الحركة، والتعبير"):
         o_1, o_2 = st.columns(2)
         with o_1: s_outfit = st.selectbox("5. نوع الملابس", list(outfits_dict.keys()))
